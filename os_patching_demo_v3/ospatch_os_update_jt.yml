@@ -1,6 +1,6 @@
 ---
 - name: "Linux Patching : Patching Process"
-  hosts: "{{ vm_nodes }}"
+  hosts: all
   #strategy: free
   gather_facts: false
   become: true
