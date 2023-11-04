@@ -1,4 +1,3 @@
----
 - name: "Linux Patching : Patching Process"
   hosts: all
   #strategy: free
