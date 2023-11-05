@@ -1,0 +1,61 @@
+---
+# This playbook takes care of installing the correct packages
+#
+- name: 'Gather API host facts'
+  ansible.builtin.setup:
+    gather_subset:
+      - 'min'
+  register: 'api_facts'
+  delegate_to: "{{ vsphere_api_host }}"
+
+- name: 'Include OS specific vars'
+  ansible.builtin.include_vars: "{{ lookup('first_found', vmware_install_vars) }}"
+  # yamllint disable rule:line-length
+  vars:
+    vmware_install_vars:
+      files:
+        - "{{ api_facts['ansible_facts']['ansible_os_family'] }}-{{ api_facts['ansible_facts']['ansible_distribution_major_version'] }}-vSphere-{{ vsphere_sdk_version.split('.')[0] }}.yml"
+        - "{{ api_facts['ansible_facts']['ansible_os_family'] }}-{{ api_facts['ansible_facts']['ansible_distribution_major_version'] }}.yml"
+        - "{{ api_facts['ansible_facts']['ansible_os_family'] }}.yml"
+      paths:
+        - 'vars/vmware_install'
+
+- name: 'Ensure packages'
+  ansible.builtin.package:
+    name: "{{ vmware_packages }}"
+    state: 'present'
+  delegate_to: "{{ vsphere_api_host }}"
+
+- name: 'Ensure extra dependencies from Pip'
+  ansible.builtin.pip:
+    name: "{{ vmware_pip_packages }}"
+    state: 'present'
+    executable: "{{ vmware_pip_executable }}"
+  delegate_to: "{{ vsphere_api_host }}"
+  when: vmware_pip_packages | length > 0
+
+- name: 'Check Ansible cache directory'
+  ansible.builtin.file:
+    state: 'directory'
+    path: '/var/cache/ansible/'
+    owner: "{{ vsphere_download_sdk_privileged | ternary('root', vsphere_download_sdk_user) }}"
+    group: "{{ vsphere_download_sdk_privileged | ternary('root', vsphere_download_sdk_user) }}"
+    mode: '0755'
+  delegate_to: "{{ vsphere_api_host }}"
+
+- name: 'Clone vSphere Automation SDK repo'
+  ansible.builtin.git:
+    repo: "{{ vsphere_sdk_url }}"
+    dest: '/var/cache/ansible/vsphere-sdk'
+    clone: true
+    version: "v{{ vsphere_sdk_version }}"
+  delegate_to: "{{ vsphere_api_host }}"
+  become: "{{ vsphere_download_sdk_privileged }}"
+
+- name: 'Install vSphere Automation SDK via pip'
+  ansible.builtin.pip:
+    chdir: '/var/cache/ansible/vsphere-sdk'
+    name: '.'
+    state: 'present'
+    executable: "{{ vmware_pip_executable }}"
+  delegate_to: "{{ vsphere_api_host }}"

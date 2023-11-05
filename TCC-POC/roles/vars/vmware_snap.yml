@@ -1,0 +1,8 @@
+---
+# Variables file for the VMWare snapshot tasks
+#
+vmware_supported_states:
+  - present
+  - absent
+  - remove_all
+  - revert

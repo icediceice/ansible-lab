@@ -1,0 +1,60 @@
+---
+# Create/edit the VM
+- name: 'Ensure Virtual Machine status'
+  community.vmware.vmware_guest:
+    hostname: "{{ vsphere_host }}"
+    username: "{{ vsphere_username }}"
+    password: "{{ vsphere_password }}"
+    validate_certs: "{{ vsphere_validate_certs }}"
+    datacenter: "{{ vsphere_datacenter }}"
+    force: "{{ vmware_target_force }}"
+    name: "{{ vmware_target_hostname | default(inventory_hostname, true) }}"
+    folder: "{{ vmware_target_folder }}"
+    state: "{{ vmware_target_state }}"
+    esxi_hostname: "{{ vmware_target_esxi_hostname | default(omit, true) }}"
+    cluster: "{{ vmware_target_esxi_cluster | default(omit, true) }}"
+    template: "{{ vmware_target_template | default(omit, true) }}"
+    disk: "{{ vmware_target_disks }}"
+    guest_id: "{{ vmware_target_guest_os }}"
+    hardware:
+      memory_mb: "{{ vmware_target_ram['mb'] }}"
+      memory_reservation_lock: "{{ vmware_target_ram['reservation_lock'] | default(omit) }}"
+      mem_limit: "{{ vmware_target_ram['limit_mb'] | default(omit) }}"
+      mem_reservation: "{{ vmware_target_ram['reserved_mb'] | default(omit) }}"
+      hotadd_memory: "{{ vmware_target_ram['hotadd'] | default(omit) }}"
+      num_cpus: "{{ vmware_target_cpu['cpus'] }}"
+      num_cpu_cores_per_socket: "{{ vmware_target_cpu['cores_per_socket'] }}"
+      cpu_limit: "{{ vmware_target_cpu['limit_mhz'] | default(omit) }}"
+      cpu_reservation: "{{ vmware_target_cpu['reserved_mhz'] | default(omit) }}"
+      hotadd_cpu: "{{ vmware_target_cpu['hotadd'] | default(omit) }}"
+      hotremove_cpu: "{{ vmware_target_cpu['hotremove'] | default(omit) }}"
+      scsi: "{{ vmware_target_scsi }}"
+      version: "{{ vmware_target_vm_version }}"
+      boot_firmware: "{{ vmware_target_boot['firmware'] }}"
+    cdrom: "{{ vmware_target_cdrom }}"
+    networks: "{{ vmware_target_networks }}"
+    customization: "{{ vmware_target_customization | default('{}') }}"
+    wait_for_ip_address: false
+  delegate_to: "{{ vsphere_api_host }}"
+  register: 'deploy'
+  # Workaround for https://github.com/ansible/ansible/issues/41736
+  retries: 2
+  delay: 3
+  until: not deploy['failed']
+
+- name: 'Ensure VM boot settings'
+  community.vmware.vmware_guest_boot_manager:
+    hostname: "{{ vsphere_host }}"
+    username: "{{ vsphere_username }}"
+    password: "{{ vsphere_password }}"
+    validate_certs: "{{ vsphere_validate_certs }}"
+    name: "{{ vmware_target_hostname | default(inventory_hostname, true) }}"
+    boot_delay: "{{ vmware_target_boot['delay'] | default(omit) }}"
+    enter_bios_setup: "{{ vmware_target_boot['enter_setup'] | default(omit) }}"
+    boot_retry_enabled: "{{ vmware_target_boot['retry_enabled'] | default(omit) }}"
+    boot_retry_delay: "{{ vmware_target_boot['retry_delay'] | default(omit) }}"
+    boot_firmware: "{{ vmware_target_boot['firmware'] | default(omit) }}"
+    secure_boot_enabled: "{{ vmware_target_boot['secure_boot'] | default(omit) }}"
+    boot_order: "{{ vmware_target_boot['order'] | default(omit) }}"
+  delegate_to: "{{ vsphere_api_host }}"
+  when: vmware_target_state != 'absent'

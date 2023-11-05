@@ -1,0 +1,14 @@
+---
+# This playbook will manage the powerstate of all targeted VMs
+#
+- name: 'Set VM powerstate'
+  community.vmware.vmware_guest_powerstate:
+    hostname: "{{ vsphere_host }}"
+    username: "{{ vsphere_username }}"
+    password: "{{ vsphere_password }}"
+    folder: "{{ vm_location['folders'][0] }}"
+    name: "{{ vmware_target_hostname | default(inventory_hostname, true) }}"
+    validate_certs: "{{ vsphere_validate_certs }}"
+    state: "{{ vmware_target_state }}"
+    state_change_timeout: "{{ vmware_powerstate_wait }}"
+  delegate_to: "{{ vsphere_api_host }}"
