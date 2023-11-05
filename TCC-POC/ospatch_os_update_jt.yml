@@ -1,8 +1,17 @@
-# Sample configuration file for VMware Host dynamic inventory
-    plugin: community.vmware.vmware_host_inventory
-    strict: false
-    hostname: 192.168.50.26
-    username: root
-    password: Afk5min$!@#
-    validate_certs: false
-    with_tags: true
+---
+- name: Retrieve VMware ESX Inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Get VM List
+      vmware_vm_info:
+        hostname: "192.168.50.26"
+        username: "root"
+        password: "your_password"
+        validate_certs: no
+      delegate_to: localhost
+      register: vm_list
+
+    - name: Display VM List
+      debug:
+        var: vm_list.virtual_machines
