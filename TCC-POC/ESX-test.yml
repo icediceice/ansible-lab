@@ -1,4 +1,9 @@
 ---
+- name: Playbook using a collection
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - community.vmware
 - name: Retrieve VMware ESX Inventory
   hosts: localhost
   gather_facts: false
