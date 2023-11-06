@@ -1,8 +1,0 @@
----
-- name: Global Load Balancer Switch Sites
-  hosts: global_lb
-  become: yes
-  gather_facts: false
-
-  roles:
-    - lb_switch_site

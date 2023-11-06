@@ -1,7 +1,0 @@
----
-- name: Install Windows Updates
-  win_updates:
-    category_names: "{{ win_update_category }}"
-    reject_list: "{{ win_update_blacklist }}"
-    accept_list: "{{ win_update_whitelist }}"
-    reboot: "{{ automatic_reboot_after_update }}"

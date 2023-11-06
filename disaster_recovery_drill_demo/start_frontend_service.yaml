@@ -1,8 +1,0 @@
----
-- name: Start Frontend Service
-  hosts: "{{ target_load_balancers }}"
-  become: yes
-  gather_facts: false
-
-  roles:
-    - start_frontend_service

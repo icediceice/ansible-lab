@@ -1,3 +1,0 @@
----
-# Default name for snapshot if not otherwise set
-vmware_default_snapshot_name: 'ansible_snap_default'

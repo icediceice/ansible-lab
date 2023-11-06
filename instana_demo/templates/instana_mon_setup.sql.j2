@@ -1,9 +1,0 @@
-USE mysql;
-CREATE USER '{{ mysql_user }}'@'localhost' IDENTIFIED BY '{{ mysql_user_password }}';
-GRANT ALL ON *.* TO '{{ mysql_user }}'@'localhost';
-FLUSH PRIVILEGES;
-GRANT SELECT ON performance_schema.* TO '{{ mysql_user }}'@'localhost';
-GRANT SELECT ON performance_schema.events_waits_summary_global_by_event_name TO '{{ mysql_user }}'@'localhost';
-GRANT SELECT ON performance_schema.events_statements_summary_by_digest TO '{{ mysql_user }}'@'localhost';
-GRANT SELECT ON performance_schema.events_statements_summary_global_by_event_name TO '{{ mysql_user }}'@'localhost';
-GRANT REPLICATION CLIENT ON *.* TO '{{ mysql_user }}'@'localhost';

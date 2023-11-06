@@ -1,4 +1,0 @@
----
-ocp_cluster: 'aws-ocp-cluster-1'
-ocp_namespace: 'rhacs-operator'
-rox_central_address: 'central-rhacs-operator.apps.cluster-65kpr.65kpr.sandbox458.opentlc.com:443'

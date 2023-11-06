@@ -1,7 +1,0 @@
----
-- name: Import OCP Cluster into ACS
-  hosts: localhost
-  gather_facts: no
-
-  roles:
-    - acs_cluster_import

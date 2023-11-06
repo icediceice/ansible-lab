@@ -1,3 +1,0 @@
----
-# Default waiting time before vmware_guest_powerstate returns
-vmware_powerstate_wait: 600

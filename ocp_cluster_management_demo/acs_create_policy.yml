@@ -1,7 +1,0 @@
----
-- name: Get New Policy in RHACS
-  hosts: localhost
-  gather_facts: false
-
-  roles:
-    - acs_create_policy

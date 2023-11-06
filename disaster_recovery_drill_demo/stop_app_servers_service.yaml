@@ -1,8 +1,0 @@
----
-- name: Stop Application Server Service
-  hosts: "{{ target_app_servers }}"
-  become: yes
-  gather_facts: false
-
-  roles:
-    - stop_app_server_service
