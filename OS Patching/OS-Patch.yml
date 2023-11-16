@@ -1,0 +1,9 @@
+---
+- name: Apply OS Patches
+  hosts: all
+  gather_facts: false
+  become: true
+  el_patching_method: security
+  roles:
+        - el_patching
+	

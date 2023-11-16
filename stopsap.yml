@@ -1,0 +1,21 @@
+---
+- name: Execute a shell command
+  hosts: stas4p01
+  become: yes
+  tasks:
+    - name: Stop running SAP
+      shell: su - s4padm -c 'sapcontrol -nr 00 -function StopSystem ALL'
+
+    - name: Wait for dw.sap* process to stop
+      command: pgrep -f 'dw.sap*'
+      register: process_check
+      failed_when: process_check.rc == 0
+      until: process_check.rc != 0
+      retries: 20  # Number of retries
+      delay: 15    # Delay in seconds between retries
+      ignore_errors: true
+
+    - name: Success message
+      debug:
+        msg: "Process dw.sap* is no longer running."
+      

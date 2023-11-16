@@ -1,0 +1,35 @@
+---
+- name: Execute a shell command
+  hosts: stas4p01
+  become: yes
+  tasks:
+    - name: Stop running SAP
+      shell: su - s4padm -c 'sapcontrol -nr 00 -function StartSystem ALL'
+
+    - name: Check for more than 5 dw.sap* processes
+      shell: pgrep -f 'dw.sap*' | wc -l
+      register: dw_sap_process_count
+      until: dw_sap_process_count.stdout | int > 5
+      retries: 20  # Number of retries
+      delay: 15    # Delay in seconds between retries
+      ignore_errors: true
+      
+    - name: Check for enq.sap* process
+      command: pgrep -f 'enq.sap*'
+      register: enq_sap_process_check
+      until: enq_sap_process_check.rc == 0
+      retries: 20
+      delay: 15
+      ignore_errors: true
+      
+    - name: Check for ms.sap* process
+      command: pgrep -f 'ms.sap*'
+      register: ms_sap_process_check
+      until: ms_sap_process_check.rc == 0
+      retries: 20
+      delay: 15
+      ignore_errors: true
+
+    - name: Success message
+      debug:
+        msg: "More than 5 dw.sap* processes, and enq.sap* and ms.sap* processes are running."

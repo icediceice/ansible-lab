@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  
+  tasks:
+    - name: Include Secret Environment Items
+      include_vars:
+        file: secrets.yml
+        name: secret
+
+    - name: vCenter Login
+      uri:
+        url: "https://{{secret.vcenter}}/rest/com/vmware/cis/session"
+        force_basic_auth: yes
+        method: POST
+        user: "{{secret.username}}"
+        password: "{{secret.password}}"
+        status_code: 200
+        validate_certs: no
+      register: login
+
+    - name: Get hosts from vCenter
+      uri:
+        url: "https://{{secret.vcenter}}/rest/vcenter/host"
+        force_basic_auth: yes
+        validate_certs: no
+        headers:
+          Cookie: "{{login.set_cookie}}"
+      register: vchosts
+
+    - name: snapshots
+  community.vmware.vmware_guest_snapshot:
+    hostname: "{{secret.vcenter}}"
+    username: "{{secret.username}}"
+    password: "{{secret.password}}"
+    datacenter: "DC"
+    folder: "/{{ datacenter_name }}/vm/"
+    name: "test"
+    state: present
+    snapshot_name: Ansible-Prepatch-Snapshot
+    description: The server is being patch and currently snapshot is holding for restoration
+  delegate_to: localhost
