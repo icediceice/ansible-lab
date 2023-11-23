@@ -14,7 +14,7 @@
     password: "{{secret.password}}"
     datacenter: "DC"
     folder: "/{{ datacenter_name }}/vm/"
-    name: "test"
+    name: "RHEL8"
     state: present
     snapshot_name: Ansible-Prepatch-Snapshot
     description: The server is being patch and currently snapshot is holding for restoration
