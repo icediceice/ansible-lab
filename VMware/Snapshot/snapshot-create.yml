@@ -9,14 +9,14 @@
 
     - name: snapshots
       community.vmware.vmware_guest_snapshot:
-      hostname: "{{secret.vcenter}}"
-      username: "{{secret.username}}"
-      password: "{{secret.password}}"
-      validate_certs: no
-      datacenter: "local"
-      folder: "/local/vm/"
-      name: "RHEL8"
-      state: present
-      snapshot_name: "Ansible-Prepatch-Snapshot"
-      description: "The server is being patch and currently snapshot is holding for restoration"
-    delegate_to: localhost
+        hostname: "{{secret.vcenter}}"
+        username: "{{secret.username}}"
+        password: "{{secret.password}}"
+        validate_certs: no
+        datacenter: "local"
+        folder: "/local/vm/"
+        name: "RHEL8"
+        state: present
+        snapshot_name: "Ansible-Prepatch-Snapshot"
+        description: "The server is being patch and currently snapshot is holding for restoration"
+      delegate_to: localhost
