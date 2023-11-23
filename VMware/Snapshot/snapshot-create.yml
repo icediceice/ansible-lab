@@ -1,11 +1,12 @@
 ---
+
+secret.vcenter: 192.168.137.250
+secret.username: administrator@vsphere.local
+secret.password: P@ssw0rd
+
 - hosts: localhost
   
   tasks:
-    - name: Include Secret Environment Items
-      include_vars:
-        file: secrets.yml
-        name: secret
 
     - name: snapshots
       community.vmware.vmware_guest_snapshot:
