@@ -1,11 +1,9 @@
 ---
-
-secret.vcenter: 192.168.137.250
-secret.username: administrator@vsphere.local
-secret.password: P@ssw0rd
-
 - hosts: localhost
-  
+  vars:
+    secret.vcenter: "192.168.137.250"
+    secret.username: "administrator@vsphere.local"
+    secret.password: "P@ssw0rd"
   tasks:
 
     - name: snapshots
