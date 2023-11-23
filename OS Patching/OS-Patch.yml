@@ -1,9 +1,57 @@
 ---
-- name: Apply OS Patches
+- name: Update and Patch RHEL 8 Server Based on Update Type
   hosts: all
-  gather_facts: false
-  become: true
-  el_patching_method: security
-  roles:
-        - el_patching
-	
+  become: yes
+  vars:
+    update_type: "{{ patch_type }}"  # 'security', 'bugfix', or 'all'
+
+  tasks:
+    - name: Check for available security updates
+      yum:
+        list: security
+      register: security_updates
+      when: update_type == 'security'
+
+    - name: Check for available bugfix updates
+      yum:
+        list: bugfix
+      register: bugfix_updates
+      when: update_type == 'bugfix'
+
+    - name: Check for all available updates
+      yum:
+        list: updates
+      register: all_updates
+      when: update_type == 'all'
+
+    - name: Apply security updates
+      yum:
+        name: '*'
+        state: latest
+        security: yes
+      when: update_type == 'security' and security_updates.results|length > 0
+
+    - name: Apply bugfix updates
+      yum:
+        name: '*'
+        state: latest
+        bugfix: yes
+      when: update_type == 'bugfix' and bugfix_updates.results|length > 0
+
+    - name: Apply all available updates
+      yum:
+        name: '*'
+        state: latest
+      when: update_type == 'all' and all_updates.results|length > 0
+
+    - name: Clean up Yum caches
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+
+    - name: Restart the server
+      reboot:
+        msg: "Rebooting for kernel update"
+        reboot_timeout: 3600
+      when: ansible_facts.packages['kernel'] is defined and ansible_facts.packages['kernel']|length > 1

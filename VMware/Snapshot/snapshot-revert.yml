@@ -15,7 +15,7 @@
         datacenter: "local"
         folder: "/local/vm/"
         name: "RHEL8"
-        state: absent
+        state: revert
         snapshot_name: "Ansible-Prepatch-Snapshot"
         description: "The server is being patch and currently snapshot is holding for restoration"
       delegate_to: localhost
