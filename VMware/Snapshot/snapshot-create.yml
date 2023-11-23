@@ -12,10 +12,11 @@
       hostname: "{{secret.vcenter}}"
       username: "{{secret.username}}"
       password: "{{secret.password}}"
-      datacenter: "DC"
-      folder: "/{{ datacenter_name }}/vm/"
+      validate_certs: no
+      datacenter: "local"
+      folder: "/local/vm/"
       name: "RHEL8"
       state: present
-      snapshot_name: Ansible-Prepatch-Snapshot
+      snapshot_name: "Ansible-Prepatch-Snapshot"
       description: "The server is being patch and currently snapshot is holding for restoration"
     delegate_to: localhost
