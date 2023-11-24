@@ -1,0 +1,15 @@
+---
+- name: Windows Update Playbook
+  hosts: windows
+  tasks:
+    - name: Install Windows Updates
+      win_updates:
+        category_names:
+          - CriticalUpdates
+          - SecurityUpdates
+          - UpdateRollups
+        state: installed
+        reboot: yes
+
+    - name: Check if a reboot is required
+      win_reboot:
