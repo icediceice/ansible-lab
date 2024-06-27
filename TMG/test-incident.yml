@@ -1,0 +1,21 @@
+---
+- name: Sample playbook
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create a new incident
+      servicenow.itsm.incident:
+        # Instance data
+        instance:
+          host: https://tmgsnowdev.service-now.com/
+          username: admin
+          password: P@ssw0rd
+
+        # No sys_id or number because we are creating a new incident
+
+        # Common parameters
+        caller: admin
+        short_description: Demo incident
+        impact: low
+        urgency: low
