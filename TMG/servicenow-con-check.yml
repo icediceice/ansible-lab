@@ -1,48 +1,30 @@
 ---
-- name: Test ServiceNow Endpoint Connection
-  hosts: localhost  # Run this locally for simplicity
+- name: ServiceNow Connection Test
+  hosts: localhost
   gather_facts: false
-
+  
   vars:
     servicenow_instance: "https://tmgsnowdev.service-now.com/"  # Your ServiceNow URL
     servicenow_user: "admin"                                # ServiceNow username
     servicenow_password: "P@ssw0rd"                            # ServiceNow password (be secure!)
-    
+
   tasks:
-    # Ping the ServiceNow instance with basic auth (if applicable)
-    - name: Check ServiceNow Endpoint Availability
-      uri:
-        url: "{{ servicenow_instance }}/api/now/table/incident?sysparm_limit=1"
-        user: "{{ servicenow_user }}"
-        password: "{{ servicenow_password }}"
-        method: GET
-        status_code: 200
-        validate_certs: false  # Set to true if your instance has a valid SSL cert
-      register: http_result
-      ignore_errors: true  # Allow other tasks to run even if this fails
-      
-    - name: Display ServiceNow Endpoint Results
-      debug:
-        msg: "{{ http_result }}"
-
-    # Additional Check: Query a table (more rigorous but requires permissions)
-    - name: Query a Sample Table (Optional)
-      servicenow_table:
-        instance: "{{ servicenow_instance }}"
-        user: "{{ servicenow_user }}"
-        password: "{{ servicenow_password }}"
-        table: "incident"
-        query: "active=true"
+    # Test Authentication
+    - name: Test Connection to ServiceNow
+      servicenow.itsm.incident:  
         state: list
-      register: table_result
-      ignore_errors: true
-      
-    - name: Display Table Query Results
-      debug:
-        msg: "{{ table_result }}"
+        instance: "{{ servicenow_instance }}"
+        username: "{{ servicenow_user }}"
+        password: "{{ servicenow_password }}"
+        query: "sysparm_limit=1"  # Fetch only one record to keep it lightweight
+      register: result
+      ignore_errors: true  # Allow other tasks to run even if this fails
 
-    # Handle Potential Failures
+    - name: Display Connection Result
+      debug:
+        msg: "{{ result }}"
+
     - name: Fail if Connection is Not Available
       fail:
-        msg: "ServiceNow endpoint connection test failed!"
-      when: http_result is failed or (table_result is defined and table_result is failed)
+        msg: "ServiceNow connection test failed!"
+      when: result is failed  # Fail the playbook if the connection fails
