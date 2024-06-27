@@ -9,7 +9,7 @@
         instance: "https://tmgsnowdev.service-now.com/"  # Your ServiceNow URL
         username: "admin"
         password: "P@ssw0rd"
-        query: "number=INC0269932"  # Example incident number. Replace or use another query 
+        number: INC0269932  # Example incident number. Replace or use another query 
       register: incident_result
 
     - debug:
