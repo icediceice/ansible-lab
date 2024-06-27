@@ -1,0 +1,17 @@
+---
+- name: Check Python Version on Local Machine
+  hosts: localhost
+  gather_facts: false 
+
+  tasks:
+    - name: Determine Python Version
+      shell: python --version 2>&1
+      register: python_version_output
+
+    - name: Extract Version String
+      set_fact:
+        python_version: "{{ python_version_output.stderr.split()[1] }}"
+
+    - name: Display Python Version
+      debug:
+        msg: "Python version on localhost: {{ python_version }}" 
