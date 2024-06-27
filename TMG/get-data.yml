@@ -6,9 +6,11 @@
   tasks:
     - name: Retrieve Incident Information
       servicenow.itsm.incident_info:
-        instance: "https://tmgsnowdev.service-now.com/"  # Your ServiceNow URL
-        username: "admin"
-        password: "P@ssw0rd"
+        instance:
+          host: https://tmgsnowdev.service-now.com/
+          username: admin
+          password: P@ssw0rd
+          
         number: INC0269932  # Example incident number. Replace or use another query 
       register: incident_result
 
